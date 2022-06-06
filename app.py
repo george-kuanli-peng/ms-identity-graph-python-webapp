@@ -67,9 +67,20 @@ def logout():
 def graphcall():
     token = get_token_from_cache(app_config.SCOPE)
     graph_data = requests.get(  # Use token to call downstream service
-        app_config.ENDPOINT,
+        app_config.GRAPH_ENDPOINT + '/users',
         headers={'Authorization': 'Bearer ' + token['access_token']},
         ).json()
+    return render_template('display.html', result=graph_data)
+
+
+@app.route('/mydrives')
+@login_required
+def mydrives():
+    token = get_token_from_cache(app_config.SCOPE)
+    graph_data = requests.get(
+        app_config.GRAPH_ENDPOINT + '/drives',
+        headers={'Authorization': 'Bearer ' + token['access_token']},
+    ).json()
     return render_template('display.html', result=graph_data)
 
 
