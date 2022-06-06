@@ -1,4 +1,7 @@
-This repo is extended/modified from https://github.com/Azure-Samples/ms-identity-python-webapp
+This repo is extended/modified from the following sources:
+
+1. https://github.com/Azure-Samples/ms-identity-python-webapp
+1. https://github.com/Azure-Samples/ms-identity-python-flask-webapp-authentication
 
 ---
 page_type: sample

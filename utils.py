@@ -1,7 +1,30 @@
+from functools import wraps
+
 import msal
 from flask import session, url_for
 
 import app_config
+
+
+class AuthError(Exception):
+    # basic auth exception
+    pass
+
+
+try:
+    from werkzeug.exceptions import HTTPException
+
+    class NotAuthenticatedError(HTTPException, AuthError):
+        """Flask HTTPException Error + IdWebPy AuthError: User is not authenticated."""
+        code = 401
+        status = 401
+        description = 'User is not authenticated'
+except ImportError:
+    class NotAuthenticatedError(AuthError):
+        """IdWebPy AuthError: User is not authenticated."""
+        code = 401
+        status = 401
+        description = 'User is not authenticated'
 
 
 def load_cache():
@@ -36,3 +59,19 @@ def get_token_from_cache(scope=None):
         result = cca.acquire_token_silent(scope, account=accounts[0])
         save_cache(cache)
         return result
+
+
+def login_required(f):
+    """@decorator to ensure user is authenticated"""
+    @wraps(f)
+    def assert_login(*args, **kwargs):
+        token = get_token_from_cache(app_config.SCOPE)
+        if not token:
+            raise NotAuthenticatedError
+        # TODO: check if ID token is expired
+        # if it is, take user to get re-authenticated.
+        # TODO: upon returning from re-auth, user should get back to
+        # where they were trying to go.
+        return f(*args, **kwargs)
+    return assert_login
+

@@ -3,13 +3,18 @@ from flask import Flask, render_template, session, request, redirect, url_for
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 
 import app_config
-from utils import (build_auth_code_flow, build_msal_app, get_token_from_cache,
-                   load_cache, save_cache)
+from utils import (NotAuthenticatedError,
+                   build_auth_code_flow, build_msal_app, get_token_from_cache,
+                   load_cache, login_required, save_cache)
 
 
 app = Flask(__name__)
 app.config.from_object(app_config)
 Session(app)
+app.register_error_handler(
+    NotAuthenticatedError,
+    lambda err: (render_template('auth_401_error.html'), err.code)
+)
 
 # This section is needed for url_for("foo", _external=True) to automatically
 # generate http scheme when this sample is running on localhost,
@@ -58,10 +63,9 @@ def logout():
 
 
 @app.route("/graphcall")
+@login_required
 def graphcall():
     token = get_token_from_cache(app_config.SCOPE)
-    if not token:
-        return redirect(url_for("login"))
     graph_data = requests.get(  # Use token to call downstream service
         app_config.ENDPOINT,
         headers={'Authorization': 'Bearer ' + token['access_token']},
