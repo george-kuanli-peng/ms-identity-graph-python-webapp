@@ -1,3 +1,5 @@
+This repo is extended/modified from https://github.com/Azure-Samples/ms-identity-python-webapp
+
 ---
 page_type: sample
 languages:
