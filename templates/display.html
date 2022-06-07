@@ -2,10 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <style>
+    table, th, td {
+    border: 1px solid black;
+    }
+    </style>
 </head>
 <body>
     <a href="javascript:window.history.go(-1)">Back</a> <!-- Displayed on top of a potentially large JSON response, so it will remain visible -->
-    <h1>Graph API Call Result</h1>
+    <h1>{{ api_name if api_name is defined else 'Graph API' }}</h1>
+    {% if tab_result_body is defined %}
+    <table>
+        {% if tab_result_title is defined %}
+        <thead><tr>
+            {% for trt in tab_result_title %}<th>{{ trt }}</th>{% endfor %}
+        </tr></thead>
+        {% endif %}
+        <tbody>
+            {% for trb_row in tab_result_body %}
+            <tr>{% for trb in trb_row %}<td>{{ trb }}</td>{% endfor %}</tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    <h2>Raw Results</h2>
     <pre>{{ result |tojson(indent=4) }}</pre> <!-- Just a generic json viewer -->
 </body>
 </html>

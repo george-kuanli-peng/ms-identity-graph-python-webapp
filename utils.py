@@ -51,12 +51,15 @@ def build_auth_code_flow(authority=None, scopes=None):
         redirect_uri=url_for("authorized", _external=True))
 
 
-def get_token_from_cache(scope=None):
+def get_token_from_cache(scope=None, default_scope=False):
     cache = load_cache()  # This web app maintains one cache per session
     cca = build_msal_app(cache=cache)
     accounts = cca.get_accounts()
     if accounts:  # So all account(s) belong to the current signed-in user
-        result = cca.acquire_token_silent(scope, account=accounts[0])
+        result = cca.acquire_token_silent(
+            app_config.SCOPE if default_scope else scope,
+            account=accounts[0]
+            )
         save_cache(cache)
         return result
 
@@ -75,3 +78,6 @@ def login_required(f):
         return f(*args, **kwargs)
     return assert_login
 
+
+def get_graph_api_url(path='') -> str:
+    return app_config.GRAPH_ENDPOINT + path

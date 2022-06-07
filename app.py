@@ -3,6 +3,7 @@ from flask import Flask, render_template, session, request, redirect, url_for
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 
 import app_config
+from blueprints.me import me_bp
 from utils import (NotAuthenticatedError,
                    build_auth_code_flow, build_msal_app, get_token_from_cache,
                    load_cache, login_required, save_cache)
@@ -15,6 +16,7 @@ app.register_error_handler(
     NotAuthenticatedError,
     lambda err: (render_template('auth_401_error.html'), err.code)
 )
+app.register_blueprint(me_bp, url_prefix='/me')
 
 # This section is needed for url_for("foo", _external=True) to automatically
 # generate http scheme when this sample is running on localhost,
@@ -73,18 +75,7 @@ def graphcall():
     return render_template('display.html', result=graph_data)
 
 
-@app.route('/mydrives')
-@login_required
-def mydrives():
-    token = get_token_from_cache(app_config.SCOPE)
-    graph_data = requests.get(
-        app_config.GRAPH_ENDPOINT + '/drives',
-        headers={'Authorization': 'Bearer ' + token['access_token']},
-    ).json()
-    return render_template('display.html', result=graph_data)
-
-
-app.jinja_env.globals.update(_build_auth_code_flow=build_auth_code_flow)  # Used in template
+app.jinja_env.globals.update(_build_auth_code_flow=build_auth_code_flow)
 
 if __name__ == "__main__":
     app.run()
