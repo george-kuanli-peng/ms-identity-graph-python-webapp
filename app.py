@@ -1,12 +1,11 @@
-import requests
 from flask import Flask, render_template, session, request, redirect, url_for
 from flask_session import Session  # https://pythonhosted.org/Flask-Session
 
 import app_config
 from blueprints.me import me_bp
 from utils import (NotAuthenticatedError,
-                   build_auth_code_flow, build_msal_app, get_token_from_cache,
-                   load_cache, login_required, save_cache)
+                   build_auth_code_flow, build_msal_app,
+                   load_cache, save_cache)
 
 
 app = Flask(__name__)
@@ -41,7 +40,8 @@ def login():
     return render_template("login.html", auth_url=session["flow"]["auth_uri"])
 
 
-@app.route(app_config.REDIRECT_PATH)  # Its absolute URL must match your app's redirect_uri set in AAD
+# Its absolute URL must match your app's redirect_uri set in AAD
+@app.route(app_config.REDIRECT_PATH)
 def authorized():
     try:
         cache = load_cache()
@@ -62,17 +62,6 @@ def logout():
     return redirect(  # Also logout from your tenant's web session
         app_config.AUTHORITY + "/oauth2/v2.0/logout" +
         "?post_logout_redirect_uri=" + url_for("index", _external=True))
-
-
-@app.route("/graphcall")
-@login_required
-def graphcall():
-    token = get_token_from_cache(app_config.SCOPE)
-    graph_data = requests.get(  # Use token to call downstream service
-        app_config.GRAPH_ENDPOINT + '/users',
-        headers={'Authorization': 'Bearer ' + token['access_token']},
-        ).json()
-    return render_template('display.html', result=graph_data)
 
 
 app.jinja_env.globals.update(_build_auth_code_flow=build_auth_code_flow)
