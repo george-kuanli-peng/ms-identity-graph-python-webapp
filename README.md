@@ -37,7 +37,7 @@ or download and extract the repository .zip file.
 
 ### Step 2: Register the sample application with your Azure Active Directory tenant
 
-> NOTE: https://github.com/george-kuanli-peng/ms-identity-graph-python-webapp.git has PowerShell scripts
+> NOTE: https://github.com/Azure-Samples/ms-identity-python-webapp has PowerShell scripts
   for auto configuring an Azure Active Directory tenant
 
 #### Choose the Azure AD tenant where you want to create your applications
