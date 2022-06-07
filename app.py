@@ -3,6 +3,7 @@ from flask_session import Session  # https://pythonhosted.org/Flask-Session
 
 import app_config
 from blueprints.me import me_bp
+from blueprints.misc import misc_bp
 from utils import (NotAuthenticatedError,
                    build_auth_code_flow, build_msal_app,
                    load_cache, save_cache)
@@ -16,6 +17,7 @@ app.register_error_handler(
     lambda err: (render_template('auth_401_error.html'), err.code)
 )
 app.register_blueprint(me_bp, url_prefix='/me')
+app.register_blueprint(misc_bp, url_prefix='/misc')
 
 # This section is needed for url_for("foo", _external=True) to automatically
 # generate http scheme when this sample is running on localhost,
