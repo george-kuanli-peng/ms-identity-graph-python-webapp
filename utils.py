@@ -7,7 +7,7 @@ import app_config
 
 
 class AuthError(Exception):
-    # basic auth exception
+    """basic auth exception"""
     pass
 
 
@@ -15,13 +15,11 @@ try:
     from werkzeug.exceptions import HTTPException
 
     class NotAuthenticatedError(HTTPException, AuthError):
-        """Flask HTTPException Error + IdWebPy AuthError: User is not authenticated."""
         code = 401
         status = 401
         description = 'User is not authenticated'
 except ImportError:
     class NotAuthenticatedError(AuthError):
-        """IdWebPy AuthError: User is not authenticated."""
         code = 401
         status = 401
         description = 'User is not authenticated'
