@@ -23,6 +23,6 @@ GRAPH_ENDPOINT = 'https://graph.microsoft.com/v1.0'
 
 # You can find the proper permission names from this document
 # https://docs.microsoft.com/en-us/graph/permissions-reference
-SCOPE = ["Files.Read.All"]
+SCOPE = ["User.Read", "Files.Read.All"]
 
 SESSION_TYPE = "filesystem"  # Specifies the token cache should be stored in server-side session

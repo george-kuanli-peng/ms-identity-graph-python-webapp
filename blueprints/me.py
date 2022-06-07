@@ -153,7 +153,8 @@ def get_drive_item_children():
 
     try:
         tab_result_title = ['id', 'name', 'size', 'type']
-        tab_result_body = [_proc_drive_item_data(row) for row in graph_data['value']]
+        tab_result_body = [_proc_drive_item_data(row)
+                           for row in graph_data['value']]
     except KeyError:
         tab_result_body = None
 
