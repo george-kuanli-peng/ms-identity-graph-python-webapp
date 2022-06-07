@@ -97,25 +97,63 @@ def get_drive_item():
         return render_template('display_drive_items.html', result={})
 
     token = get_token_from_cache(default_scope=True)
+    query_url = None
     if query_method == 'by_root':
-        graph_data = requests.get(
-            get_graph_api_url('/me/drive/root'),
-            headers={'Authorization': 'Bearer ' + token['access_token']}
-        ).json()
+        query_url = get_graph_api_url('/me/drive/root')
     elif query_method == 'by_path':
-        graph_data = requests.get(
-            get_graph_api_url('/me/drive/root:' + request.args['path_val']),
-            headers={'Authorization': 'Bearer ' + token['access_token']}
-        ).json()
+        query_url = get_graph_api_url(
+            '/me/drive/root:' + request.args['path_val']
+        )
     elif query_method == 'by_id':
-        graph_data = requests.get(
-            get_graph_api_url('/me/drive/items/' + request.args['id_val']),
-            headers={'Authorization': 'Bearer ' + token['access_token']}
-        ).json()
+        query_url = get_graph_api_url(
+            '/me/drive/items/' + request.args['id_val']
+        )
+
+    graph_data = requests.get(
+        query_url,
+        headers={'Authorization': 'Bearer ' + token['access_token']}
+    ).json()
 
     try:
         tab_result_title = ['id', 'name', 'size', 'type']
         tab_result_body = [_proc_drive_item_data(graph_data), ]
+    except KeyError:
+        tab_result_body = None
+
+    return render_template('display_drive_items.html', result=graph_data,
+                           api_name='/drive/item',
+                           tab_result_title=tab_result_title,
+                           tab_result_body=tab_result_body)
+
+
+@me_bp.route('/drive/items', methods=['GET'])
+@login_required
+def get_drive_item_children():
+    query_method = request.args.get('query_method', None)
+    if not query_method:
+        return render_template('display_drive_items.html', result={})
+
+    token = get_token_from_cache(default_scope=True)
+    query_url = None
+    if query_method == 'by_root':
+        query_url = get_graph_api_url('/me/drive/root/children')
+    elif query_method == 'by_path':
+        query_url = get_graph_api_url(
+            '/me/drive/root:' + request.args['path_val'] + ':/children'
+        )
+    elif query_method == 'by_id':
+        query_url = get_graph_api_url(
+            '/me/drive/items/' + request.args['id_val'] + '/children'
+        )
+
+    graph_data = requests.get(
+        query_url,
+        headers={'Authorization': 'Bearer ' + token['access_token']}
+    ).json()
+
+    try:
+        tab_result_title = ['id', 'name', 'size', 'type']
+        tab_result_body = [_proc_drive_item_data(row) for row in graph_data['value']]
     except KeyError:
         tab_result_body = None
 
