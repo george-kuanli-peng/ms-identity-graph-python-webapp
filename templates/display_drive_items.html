@@ -1,0 +1,18 @@
+{% extends "display.html" %}
+{% block front %}
+<form action="" method="get">
+    Please specify the query method:<br>
+    <input type="radio" id="root" name="query_method" value="by_root">
+    <label for="root">Root directory</label><br>
+
+    <input type="radio" id="path" name="query_method" value="by_path">
+    <label for="path">By path (such as /path/to/file):</label>
+    <input type="text" id="path_val" name="path_val"><br>
+
+    <input type="radio" id="id" name="query_method" value="by_id">
+    <label for="id">By Id (such as 01BYE5RZXX33ZWBTUFOTTYGSPGOHDJD28S):</label>
+    <input type="text" id="id_val" name="id_val"><br>
+
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}

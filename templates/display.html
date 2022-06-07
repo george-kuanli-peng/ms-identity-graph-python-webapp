@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>API Results</title>
     <style>
     table, th, td {
     border: 1px solid black;
@@ -11,9 +12,10 @@
 <body>
     <a href="javascript:window.history.go(-1)">Back</a> <!-- Displayed on top of a potentially large JSON response, so it will remain visible -->
     <h1>{{ api_name if api_name is defined else 'Graph API' }}</h1>
-    {% if tab_result_body is defined %}
+    {% block front %}{% endblock front %}
+    {% if tab_result_body is defined and tab_result_body is not none %}
     <table>
-        {% if tab_result_title is defined %}
+        {% if tab_result_title is defined and tab_result_title is not none %}
         <thead><tr>
             {% for trt in tab_result_title %}<th>{{ trt }}</th>{% endfor %}
         </tr></thead>
